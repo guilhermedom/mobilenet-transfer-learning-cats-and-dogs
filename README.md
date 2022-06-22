@@ -11,5 +11,6 @@ Besides using the weights of the already trained MobileNetV2, in the training sc
  
 [ImageNet] is an image dataset consisting in more than 14 million images of objects belonging to more than 20 thousand different classes. First featured in the paper: Deng, J., Dong, W., Socher, R., Li, L. J., Li, K., & Fei-Fei, L. (2009, June). Imagenet: A large-scale hierarchical image database. In 2009 IEEE conference on computer vision and pattern recognition (pp. 248-255). Ieee.
 
-[ImageNet]: https://www.image-net.org
-[MobileNetV2]: https://www.image-net.org](https://github.com/tensorflow/models/tree/master/research/slim/nets/mobilenet
+[//]: #
+   [ImageNet]: https://www.image-net.org
+   [MobileNetV2]: https://github.com/tensorflow/models/tree/master/research/slim/nets/mobilenet
