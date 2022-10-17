@@ -1,14 +1,10 @@
-import keras
+from keras.applications.mobilenet_v2 import MobileNetV2
+from keras.optimizers import RMSprop
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
-from keras.layers import Dense, Dropout, Activation, Flatten
-from keras.layers.normalization import BatchNormalization
-from keras.utils import np_utils
-from keras.layers import Conv2D, MaxPooling2D, ZeroPadding2D, GlobalAveragePooling2D
-from keras.optimizers import Adam, RMSprop
+from keras.layers import Dense, Activation
 from keras.callbacks import ReduceLROnPlateau, ModelCheckpoint, EarlyStopping
-import os, h5py
-import numpy as np
+
 
 # training data
 batch_size = 32
@@ -16,7 +12,7 @@ num_classes = 1
 epochs = 50
 
 # loading pretrained_model on imagenet with global average pooling and original sized convolutional filters
-pretrained_model = keras.applications.mobilenet_v2.MobileNetV2(input_shape=(160, 160, 3), alpha=1.0, include_top=False, weights='imagenet', pooling='avg')
+pretrained_model = MobileNetV2(input_shape=(160, 160, 3), alpha=1.0, include_top=False, weights='imagenet', pooling='avg')
 
 # model topology
 base = pretrained_model
@@ -29,7 +25,7 @@ model.add(Activation('sigmoid'))
 model.summary()
 
 # optimizer settings
-opt = keras.optimizers.RMSprop(lr=0.001, decay=1e-6)
+opt = RMSprop(lr=0.001, decay=1e-6)
 model.compile(loss='binary_crossentropy',
               optimizer=opt,
               metrics=['accuracy'])
