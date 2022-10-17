@@ -59,14 +59,14 @@ y_datagen = ImageDataGenerator(rescale=1./255)
 
 # get data for training
 traingen = X_datagen.flow_from_directory(
-                '../../data/external/cats_and_dogs_filtered/train/',
+                '../../data/raw/cats_and_dogs_filtered/train/',
                 target_size=(160, 160),
                 batch_size=batch_size,
                 class_mode='binary')
 
 # get data for testing
 testgen = y_datagen.flow_from_directory(
-		'../../data/external/cats_and_dogs_filtered/validation/',
+		'../../data/raw/cats_and_dogs_filtered/validation/',
 		target_size=(160, 160),
 		batch_size=batch_size,
 		class_mode='binary')
