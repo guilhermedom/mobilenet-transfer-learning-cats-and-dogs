@@ -1,36 +1,40 @@
-from keras.applications.mobilenet_v2 import MobileNetV2
-from keras.optimizers import RMSprop
-from keras.preprocessing.image import ImageDataGenerator
-from keras.models import Sequential
-from keras.layers import Dense, Activation
-from keras.callbacks import ReduceLROnPlateau, ModelCheckpoint, EarlyStopping
+from tensorflow.keras.applications.mobilenet_v2 import MobileNetV2
+from tensorflow.keras.optimizers import RMSprop
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Activation
+from tensorflow.keras.callbacks import (ReduceLROnPlateau,
+                                        ModelCheckpoint,
+                                        EarlyStopping)
 
 
-# training data
-batch_size = 32
-num_classes = 1
-epochs = 50
+BATCH_SIZE = 32
+NUM_CLASSES = 1
+EPOCHS = 50
 
-# loading pretrained_model on imagenet with global average pooling and original sized convolutional filters
-pretrained_model = MobileNetV2(input_shape=(160, 160, 3), alpha=1.0, include_top=False, weights='imagenet', pooling='avg')
+# Loading pretrained_model on imagenet with global average pooling and
+# original sized convolutional filters.
+pretrained_model = MobileNetV2(input_shape=(160, 160, 3),
+                               alpha=1.0,
+                               include_top=False,
+                               weights='imagenet',
+                               pooling='avg')
 
-# model topology
+# Model topology.
 base = pretrained_model
 base.trainable = False
 model = Sequential()
 model.add(base)
-model.add(Dense(num_classes))
+model.add(Dense(NUM_CLASSES))
 model.add(Activation('sigmoid'))
 
 model.summary()
 
-# optimizer settings
+# Optimizer settings.
 opt = RMSprop(lr=0.001, decay=1e-6)
-model.compile(loss='binary_crossentropy',
-              optimizer=opt,
-              metrics=['accuracy'])
+model.compile(optimizer=opt, loss='binary_crossentropy', metrics=['accuracy'])
 
-# set training generator
+# Set training generator.
 X_datagen = ImageDataGenerator(
         featurewise_center=False,
         samplewise_center=False,
@@ -48,34 +52,40 @@ X_datagen = ImageDataGenerator(
         rescale=1./255,
         preprocessing_function=None,
         data_format='channels_last',
-        validation_split=0.0)
+        validation_split=0.0
+)
 
-# set validation generator
+# Set validation generator.
 y_datagen = ImageDataGenerator(rescale=1./255)
 
-# get data for training
+# Data for training.
 traingen = X_datagen.flow_from_directory(
                 '../../data/raw/cats_and_dogs_filtered/train/',
                 target_size=(160, 160),
-                batch_size=batch_size,
+                batch_size=BATCH_SIZE,
                 class_mode='binary')
 
-# get data for testing
-testgen = y_datagen.flow_from_directory(
+# Data for validation.
+validgen = y_datagen.flow_from_directory(
 		'../../data/raw/cats_and_dogs_filtered/validation/',
 		target_size=(160, 160),
-		batch_size=batch_size,
+		batch_size=BATCH_SIZE,
 		class_mode='binary')
 
-# callbacks for training
+# Callbacks for training.
 rlr = ReduceLROnPlateau(monitor='val_loss', factor=0.9, patience=3)
 es = EarlyStopping(monitor='val_accuracy', min_delta=0, patience=10, mode='auto')
-mc = ModelCheckpoint('MobileNetV2_trained_classifier.hd5', monitor='val_loss', save_best_only=True)
+mc = ModelCheckpoint('MobileNetV2_trained_classifier.hd5', monitor='val_loss',
+                     save_best_only=True)
 
-# fit the model using the data from the generators and the callbacks above defined, with shuffling
-model.fit_generator(traingen, epochs=epochs, shuffle=True, callbacks=[rlr, mc, es], validation_data=testgen)
+# Fit the model using the generators and the callbacks above defined.
+model.fit_generator(traingen,
+                    epochs=EPOCHS,
+                    shuffle=True,
+                    callbacks=[rlr, mc, es],
+                    validation_data=validgen)
 
-# trained model score
-scores = model.evaluate(testgen, verbose=1)
-print('Test loss:', scores[0])
-print('Test accuracy:', scores[1])
+# Trained model's score.
+scores = model.evaluate(validgen, verbose=1)
+print('Validation loss:', scores[0])
+print('Validation accuracy:', scores[1])
