@@ -1,3 +1,5 @@
+import zipfile
+
 from tensorflow.keras.applications.mobilenet_v2 import MobileNetV2
 from tensorflow.keras.optimizers import RMSprop
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
@@ -57,6 +59,13 @@ X_datagen = ImageDataGenerator(
 
 # Set validation generator.
 y_datagen = ImageDataGenerator(rescale=1./255)
+
+# Extract dataset from the repository zipped folder.
+zip_object = zipfile.ZipFile(
+    '../../data/raw/cats_and_dogs_filtered.zip'
+)
+zip_object.extractall('../../data/raw/')
+zip_object.close()
 
 # Data for training.
 traingen = X_datagen.flow_from_directory(
