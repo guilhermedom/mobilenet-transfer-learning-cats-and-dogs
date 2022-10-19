@@ -84,7 +84,7 @@ validgen = validation_image_gen.flow_from_directory(
 # Callbacks for training.
 rlr = ReduceLROnPlateau(monitor='val_loss', factor=0.9, patience=3)
 es = EarlyStopping(monitor='val_accuracy', min_delta=0, patience=10, mode='auto')
-mc = ModelCheckpoint('MobileNetV2_trained_classifier.hd5', monitor='val_loss',
+mc = ModelCheckpoint('mobilenetv2_trained_classifier.hd5', monitor='val_loss',
                      save_best_only=True)
 
 # Fit the model using the generators and the callbacks above defined.
