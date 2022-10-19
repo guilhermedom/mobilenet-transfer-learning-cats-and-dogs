@@ -14,7 +14,7 @@ BATCH_SIZE = 32
 NUM_CLASSES = 1
 EPOCHS = 50
 
-# Loading pretrained_model on imagenet with global average pooling and
+# Loading pretrained model on imagenet with global average pooling and
 # original sized convolutional filters.
 pretrained_model = MobileNetV2(input_shape=(160, 160, 3),
                                alpha=1.0,
@@ -36,8 +36,8 @@ model.summary()
 opt = RMSprop(lr=0.001, decay=1e-6)
 model.compile(optimizer=opt, loss='binary_crossentropy', metrics=['accuracy'])
 
-# Set training generator.
-X_datagen = ImageDataGenerator(
+# Set train data generator with data augmentation.
+train_image_gen = ImageDataGenerator(
         featurewise_center=False,
         samplewise_center=False,
         featurewise_std_normalization=False,
@@ -57,8 +57,8 @@ X_datagen = ImageDataGenerator(
         validation_split=0.0
 )
 
-# Set validation generator.
-y_datagen = ImageDataGenerator(rescale=1./255)
+# Set validation data generator.
+validation_image_gen = ImageDataGenerator(rescale=1./255)
 
 # Extract dataset from the repository zipped folder.
 zip_object = zipfile.ZipFile(
@@ -67,15 +67,15 @@ zip_object = zipfile.ZipFile(
 zip_object.extractall('../../data/raw/')
 zip_object.close()
 
-# Data for training.
-traingen = X_datagen.flow_from_directory(
+# Data generator for training.
+traingen = train_image_gen.flow_from_directory(
                 '../../data/raw/cats_and_dogs_filtered/train/',
                 target_size=(160, 160),
                 batch_size=BATCH_SIZE,
                 class_mode='binary')
 
-# Data for validation.
-validgen = y_datagen.flow_from_directory(
+# Data generator for validation.
+validgen = validation_image_gen.flow_from_directory(
 		'../../data/raw/cats_and_dogs_filtered/validation/',
 		target_size=(160, 160),
 		batch_size=BATCH_SIZE,
@@ -96,5 +96,5 @@ model.fit_generator(traingen,
 
 # Trained model's score.
 scores = model.evaluate(validgen, verbose=1)
-print('Validation loss:', scores[0])
-print('Validation accuracy:', scores[1])
+print('Validation loss: ', scores[0])
+print('Validation accuracy: ', scores[1])
