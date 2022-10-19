@@ -1,3 +1,5 @@
+"""Transfer and train a MobileNetV2 on the Cats and Dogs dataset.
+"""
 import zipfile
 
 from tensorflow.keras.applications.mobilenet_v2 import MobileNetV2
@@ -61,9 +63,7 @@ train_image_gen = ImageDataGenerator(
 validation_image_gen = ImageDataGenerator(rescale=1./255)
 
 # Extract dataset from the repository zipped folder.
-zip_object = zipfile.ZipFile(
-    '../../data/raw/cats_and_dogs_filtered.zip'
-)
+zip_object = zipfile.ZipFile('../../data/raw/cats_and_dogs_filtered.zip')
 zip_object.extractall('../../data/raw/')
 zip_object.close()
 
